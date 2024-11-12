@@ -1,0 +1,6 @@
+robot_mover_node:
+  ros__parameters:
+    velocity_topic: "commands/velocity"
+    linear_vel: 0.3
+    angular_vel: 0.5
+    turning_time: 2.0
