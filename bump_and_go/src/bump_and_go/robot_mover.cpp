@@ -4,6 +4,7 @@
 // #undef VERBOSE
 
 using std::placeholders::_1;
+using namespace std::chrono_literals;
 
 namespace robot_mover
 {
@@ -11,12 +12,14 @@ namespace robot_mover
 RobotMover::RobotMover(const std::string & node_name)
 : Node(node_name),
   collisionData_(eCollision_UNKNOWN),
-  state_(eState_STOPPED)
+  state_(eState_STOPPED),
+  lastCollisionDataTs_(0)
 {
   initParams();
   velPub_ = this->create_publisher<Twist>(velocityTopic_, rclcpp::QoS(1));
   collisionSub_ = this->create_subscription<Int32>(collisionTopic_,
     rclcpp::QoS(1), std::bind(&RobotMover::collisionCallback, this, _1));
+  timer_ = this->create_wall_timer(1s, std::bind(&RobotMover::watchdog, this));
 }
 
 void RobotMover::step(void)
@@ -141,6 +144,21 @@ void RobotMover::collisionCallback(const Int32 & msg)
     RCLCPP_WARN(this->get_logger(), "Unknown colission data");
 #endif
   }
+  lastCollisionDataTs_ = this->get_clock()->now();
+}
+
+void RobotMover::watchdog(void)
+{
+  double elapsedSecs;
+
+  if (lastCollisionDataTs_.nanoseconds() == 0L)
+    return;
+
+  elapsedSecs = this->get_clock()->now().seconds() - lastCollisionDataTs_.seconds();
+
+  if (elapsedSecs > watchdogTime_) {
+    collisionData_ = eCollision_UNKNOWN;
+  }
 }
 
 void RobotMover::initParams(void)
@@ -149,6 +167,7 @@ void RobotMover::initParams(void)
   linearVel_ = (double)this->declare_parameter("linear_vel", 0.5);
   angularVel_ = (double)this->declare_parameter("angular_vel", 0.7);
   turningTime_ = (double)this->declare_parameter("turning_time", 1.0);
+  watchdogTime_ = (double)this->declare_parameter("watchdog_time", 1.0);
 }
 
 } // end namespace robot_mover

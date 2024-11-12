@@ -35,18 +35,21 @@ public:
   
   void step(void);
 private:
-  void collisionCallback(const Int32 & msg);
   void applyTransition(void);
   void runState(void);
   void move(double linearX, double angularZ);
+  void collisionCallback(const Int32 & msg);
+  void watchdog(void);
   void initParams(void);
 
   rclcpp::Publisher<Twist>::SharedPtr velPub_;
   rclcpp::Subscription<Int32>::SharedPtr collisionSub_;
+  rclcpp::TimerBase::SharedPtr timer_;
 
   Collision_e collisionData_;
   State_e state_;
   double timeSecs_;
+  rclcpp::Time lastCollisionDataTs_;
 
   // Configuration parameters
 
@@ -54,6 +57,7 @@ private:
   double linearVel_;
   double angularVel_;
   double turningTime_;
+  double watchdogTime_;
   const std::string collisionTopic_ = "collision_data";
 };
 

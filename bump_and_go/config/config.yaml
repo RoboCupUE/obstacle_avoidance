@@ -3,4 +3,5 @@ robot_mover_node:
     velocity_topic: "commands/velocity"
     linear_vel: 0.3
     angular_vel: 0.5
-    turning_time: 2.0
+    turning_time: 2.0                       # Seconds
+    watchdog_time: 1.0                      # Seconds. [1 - inf]
