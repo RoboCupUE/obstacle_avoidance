@@ -11,3 +11,9 @@ collision_detector_node:
   ros__parameters:
     node_rate: 5.0
     laser_topic: "scan"
+    left_range: [0.392, 0.785]
+    right_range: [5.497, 5.890]
+    front_range: [5.890, 6.675]
+    fixed_frame: "base_scan"
+    child_frame: "collision_frame"
+    frame_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]

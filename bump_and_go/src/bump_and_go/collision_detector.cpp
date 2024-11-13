@@ -1,5 +1,6 @@
 #include "bump_and_go/collision_detector.hpp"
 
+#include <math.h>
 #include <string>
 
 using std::placeholders::_1;
@@ -38,6 +39,34 @@ namespace collision_detector
   {
     rate_ = (double)this->declare_parameter("node_rate", 2.0);
     laserTopic_ = (std::string)this->declare_parameter("laser_topic", "laser_scan");
+  }
+
+  int CollisionDetector::angle2laserIndex(float rad, const LaserScan & scanMsg)
+  {
+    double angle = rad;
+    /**
+     * Move 'angle' to a range [0 - 2PI]
+     */
+    while (angle >= (2.0 * M_PI)) {
+      angle -= (2.0 * M_PI);
+    }
+
+    size_t index = 0;
+    bool found = false;
+    while (index < scanMsg.ranges.size()) { 
+      if ((scanMsg.angle_min + ((float)index * scanMsg.angle_increment)) >= rad) {
+        found = true;
+        break;
+      }
+      index++;
+    }
+
+    if (found) {
+      return index;
+    } else {
+      return -1;
+    }
+
   }
 
 } // end namespace collision_detector

@@ -40,6 +40,7 @@ ament_target_dependencies(collision_detector
   rclcpp
   std_msgs
   sensor_msgs
+  geometry_msgs
 )
 
 ####################

@@ -5,6 +5,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 
 #include <string>
+#include <vector>
 
 using namespace sensor_msgs::msg;
 
@@ -20,6 +21,8 @@ public:
 private:
   void laserCallback(const LaserScan & msg);
   void initParams(void);
+
+  int angle2laserIndex(float rad, const LaserScan & scanMsg);
 
   rclcpp::Subscription<LaserScan>::SharedPtr laserSub_;
 
