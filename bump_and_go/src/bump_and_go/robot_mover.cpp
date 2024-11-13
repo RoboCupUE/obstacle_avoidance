@@ -1,5 +1,7 @@
 #include "bump_and_go/robot_mover.hpp"
 
+#include <string>
+
 #define VERBOSE
 // #undef VERBOSE
 
@@ -16,6 +18,7 @@ RobotMover::RobotMover(const std::string & node_name)
   lastCollisionDataTs_(0)
 {
   initParams();
+
   velPub_ = this->create_publisher<Twist>(velocityTopic_, rclcpp::QoS(1));
   collisionSub_ = this->create_subscription<Int32>(collisionTopic_,
     rclcpp::QoS(1), std::bind(&RobotMover::collisionCallback, this, _1));
@@ -27,6 +30,11 @@ void RobotMover::step(void)
   applyTransition();
 
   runState();
+}
+
+double RobotMover::getRate(void)
+{
+  return rate_;
 }
 
 /*******************
@@ -156,18 +164,19 @@ void RobotMover::watchdog(void)
 
   elapsedSecs = this->get_clock()->now().seconds() - lastCollisionDataTs_.seconds();
 
-  if (elapsedSecs > watchdogTime_) {
+  if (elapsedSecs > maxLossTime_) {
     collisionData_ = eCollision_UNKNOWN;
   }
 }
 
 void RobotMover::initParams(void)
 {
-  velocityTopic_ = this->declare_parameter("velocity_topic", "cmd_vel");
+  rate_ = (double)this->declare_parameter("node_rate", 2.0);
+  velocityTopic_ = (std::string)this->declare_parameter("velocity_topic", "cmd_vel");
   linearVel_ = (double)this->declare_parameter("linear_vel", 0.5);
   angularVel_ = (double)this->declare_parameter("angular_vel", 0.7);
   turningTime_ = (double)this->declare_parameter("turning_time", 1.0);
-  watchdogTime_ = (double)this->declare_parameter("watchdog_time", 1.0);
+  maxLossTime_ = (double)this->declare_parameter("max_loss_time", 1.0);
 }
 
 } // end namespace robot_mover

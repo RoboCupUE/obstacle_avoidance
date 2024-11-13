@@ -28,6 +28,20 @@ ament_target_dependencies(robot_mover
   geometry_msgs
 )
 
+##############################
+# collision_detector library #
+##############################
+
+add_library(collision_detector SHARED
+  src/${PROJECT_NAME}/collision_detector.cpp
+)
+
+ament_target_dependencies(collision_detector
+  rclcpp
+  std_msgs
+  sensor_msgs
+)
+
 ####################
 # robot_mover_node #
 ####################
@@ -35,15 +49,30 @@ ament_target_dependencies(robot_mover
 add_executable(robot_mover_node src/robot_mover_node.cpp)
 ament_target_dependencies(robot_mover_node
   rclcpp
-  std_msgs
-  geometry_msgs)
+)
 target_link_libraries(robot_mover_node
   robot_mover
 )
-target_include_directories(robot_mover_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+#target_include_directories(robot_mover_node PUBLIC
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#  $<INSTALL_INTERFACE:include>
+#)
+
+###########################
+# collision_detector_node #
+###########################
+
+add_executable(collision_detector_node src/collision_detector_node.cpp)
+ament_target_dependencies(collision_detector_node
+  rclcpp
 )
+target_link_libraries(collision_detector_node
+collision_detector
+)
+#target_include_directories(collision_detector_node PUBLIC
+#  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#  $<INSTALL_INTERFACE:include>
+#)
 
 install(
   DIRECTORY include/
@@ -51,14 +80,22 @@ install(
 )
 
 install(
-  DIRECTORY config/
-  DESTINATION config
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
 install(TARGETS
   robot_mover
+  collision_detector
   robot_mover_node
+  collision_detector_node
   EXPORT export_robot_mover
+  EXPORT export_collision_detector
   DESTINATION lib/${PROJECT_NAME}
   LIBRARY DESTINATION lib
 )

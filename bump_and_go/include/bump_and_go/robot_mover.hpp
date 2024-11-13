@@ -1,11 +1,11 @@
+#ifndef ROBOT_MOVER_HPP_
+#define ROBOT_MOVER_HPP_
+
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <std_msgs/msg/int32.hpp>
 
 #include <string>
-
-#ifndef ROBOT_MOVER_HPP_
-#define ROBOT_MOVER_HPP_
 
 using namespace geometry_msgs::msg;
 using namespace std_msgs::msg;
@@ -34,6 +34,7 @@ public:
   RobotMover(const std::string & node_name);
   
   void step(void);
+  double getRate(void);
 private:
   void applyTransition(void);
   void runState(void);
@@ -54,10 +55,11 @@ private:
   // Configuration parameters
 
   std::string velocityTopic_;
+  double rate_;
   double linearVel_;
   double angularVel_;
   double turningTime_;
-  double watchdogTime_;
+  double maxLossTime_;
   const std::string collisionTopic_ = "collision_data";
 };
 

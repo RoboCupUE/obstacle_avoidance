@@ -1,7 +1,13 @@
 robot_mover_node:
   ros__parameters:
+    node_rate: 4.0
     velocity_topic: "commands/velocity"
     linear_vel: 0.3
     angular_vel: 0.5
     turning_time: 2.0                       # Seconds
-    watchdog_time: 1.0                      # Seconds. [1 - inf]
+    max_loss_time: 1.0                      # Seconds. [1.0 - inf]
+
+collision_detector_node:
+  ros__parameters:
+    node_rate: 5.0
+    laser_topic: "scan"
