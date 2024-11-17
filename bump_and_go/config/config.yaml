@@ -10,10 +10,11 @@ robot_mover_node:
 collision_detector_node:
   ros__parameters:
     node_rate: 5.0
+    collision_distance: 0.3
     laser_topic: "scan"
-    left_range: [0.392, 0.785]
-    right_range: [5.497, 5.890]
-    front_range: [5.890, 6.675]
-    fixed_frame: "base_scan"
-    child_frame: "collision_frame"
-    frame_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    left_range_y: [0.10, 0.20]
+    right_range_y: [-0.10, -0.20]
+    front_range_y: [-0.10, 0.10]
+    fixed_frame: "laser"
+    child_frame: "collision_laser"
+    transform_coords: [0.0, 0.0, 0.0, 0.0, 3.14, 0.0]

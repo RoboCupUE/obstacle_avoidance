@@ -12,6 +12,9 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(laser_geometry REQUIRED)
+find_package(pcl_ros REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 include_directories(include)
 
@@ -42,6 +45,9 @@ ament_target_dependencies(collision_detector
   std_msgs
   sensor_msgs
   geometry_msgs
+  laser_geometry
+  tf2
+  tf2_ros
 )
 
 ####################
